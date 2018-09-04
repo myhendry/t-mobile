@@ -6,6 +6,7 @@ import {
 } from "react-navigation";
 import { Ionicons, Foundation } from "@expo/vector-icons";
 
+import SplashScreen from "../screens/SplashScreen";
 import AuthScreen from "../screens/AuthScreen";
 import MainScreen from "../screens/MainScreen";
 import AboutScreen from "../screens/AboutScreen";
@@ -67,10 +68,11 @@ const App = createDrawerNavigator(
 
 export default createSwitchNavigator(
   {
+    SplashScreen,
     AuthScreen,
     App
   },
   {
-    initialRouteName: "AuthScreen"
+    initialRouteName: "SplashScreen"
   }
 );

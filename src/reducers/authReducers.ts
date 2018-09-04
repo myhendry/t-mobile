@@ -4,10 +4,13 @@ import {
   GOOGLE_LOGIN_FAIL,
   FACEBOOK_LOGIN,
   FACEBOOK_LOGIN_SUCCESS,
-  FACEBOOK_LOGIN_FAIL
+  FACEBOOK_LOGIN_FAIL,
+  GET_USER
 } from "../actions/types";
 
 const INITIAL_STATE = {
+  authToken: "",
+  user: {},
   isLoading: false,
   errorMsg: ""
 };
@@ -47,6 +50,13 @@ export default (state = INITIAL_STATE, action: any) => {
         ...state,
         isLoading: false,
         errorMsg: "Login Failed"
+      };
+    case GET_USER:
+      return {
+        ...state,
+        authToken: action.token,
+        user: action.user,
+        isLoading: true
       };
     default:
       return state;

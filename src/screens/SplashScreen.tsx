@@ -1,29 +1,33 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { View, Image, ActivityIndicator, StyleSheet } from "react-native";
-import { SocialIcon } from "react-native-elements";
+import {
+  View,
+  Button,
+  Image,
+  ActivityIndicator,
+  AsyncStorage,
+  StyleSheet
+} from "react-native";
 
 import { COLORS, IMAGES } from "../config/constants";
-import { googleLogin, facebookLogin } from "../actions";
+import { getAuthToken } from "../actions";
+
 interface IProps {
   navigation: any;
-  googleLogin: any;
-  facebookLogin: any;
+  getAuthToken: any;
   auth: any;
 }
 
-class AuthScreen extends Component<IProps> {
+const TOKEN_KEY = "@instore/token";
+
+class SplashScreen extends Component<IProps> {
+  async componentDidMount() {
+    // AsyncStorage.removeItem(TOKEN_KEY);
+    await this.props.getAuthToken();
+  }
   render() {
-    const {
-      root,
-      top,
-      bottom,
-      btnContainer,
-      imgContainer,
-      imgCover,
-      indicator
-    } = styles;
-    const { googleLogin, facebookLogin, auth } = this.props;
+    const { root, top, bottom, imgContainer, imgCover } = styles;
+    const { auth } = this.props;
 
     return (
       <View style={root}>
@@ -33,25 +37,13 @@ class AuthScreen extends Component<IProps> {
           </View>
         </View>
         <View style={bottom}>
-          <View style={indicator}>
-            {auth.isLoading && (
-              <ActivityIndicator size="large" color={COLORS.WHITE} />
-            )}
-          </View>
-          <View style={btnContainer}>
-            <SocialIcon
-              title="Sign In With Facebook"
-              button
-              type="facebook"
-              onPress={facebookLogin}
-            />
-            <SocialIcon
-              title="Sign In With Google"
-              button
-              type="google-plus-official"
-              onPress={googleLogin}
-            />
-          </View>
+          {auth.isLoading && (
+            <ActivityIndicator size="large" color={COLORS.WHITE} />
+          )}
+          <Button
+            title="NEXT"
+            onPress={() => this.props.navigation.navigate("AuthScreen")}
+          />
         </View>
       </View>
     );
@@ -102,5 +94,5 @@ const mapState = ({ auth }: any) => {
 
 export default connect(
   mapState,
-  { googleLogin, facebookLogin }
-)(AuthScreen);
+  { getAuthToken }
+)(SplashScreen);

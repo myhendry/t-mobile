@@ -7,3 +7,5 @@ export const FACEBOOK_LOGIN_FAIL = "FACEBOOK_LOGIN_FAIL";
 
 export const ASYNC_LOADING = "ASYNC_LOADING";
 export const ASYNC_COMPLETE = "ASYNC_COMPLETE";
+
+export const GET_USER = "GET_USER";

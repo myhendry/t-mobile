@@ -13,3 +13,7 @@ export const LAYOUT = {
 
 export const SAMPLE_IMG =
   "https://firebasestorage.googleapis.com/v0/b/manager-83703.appspot.com/o/pexels-photo-1174183.jpeg?alt=media&token=c8e41966-8c02-410b-9a41-c6b7bc376f0f";
+
+export const IMAGES = {
+  logo: require('../assets/img6.png'),
+}

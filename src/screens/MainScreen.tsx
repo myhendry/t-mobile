@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Button, StyleSheet } from "react-native";
+import { AsyncStorage, Text, View, Button, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 
 import { testAction } from "../actions";
@@ -9,8 +9,13 @@ interface IProps {
   test: any;
   testAction: any;
 }
-
+const TOKEN_KEY = "@instore/token";
 class MainScreen extends Component<IProps> {
+  async componentDidMount() {
+    const data = await AsyncStorage.getItem(TOKEN_KEY);
+    console.log("data ", data);
+  }
+
   render() {
     const { root } = styles;
     const { testAction, test } = this.props;

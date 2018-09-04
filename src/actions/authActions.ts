@@ -1,4 +1,7 @@
+import { AsyncStorage } from "react-native";
 import { Facebook, Google } from "expo";
+
+import { customersApi } from "./../api/Api";
 import { NavigationService } from "../config/NavigationService";
 
 import {
@@ -9,8 +12,11 @@ import {
   FACEBOOK_LOGIN_SUCCESS,
   FACEBOOK_LOGIN_FAIL,
   ASYNC_LOADING,
-  ASYNC_COMPLETE
+  ASYNC_COMPLETE,
+  GET_USER
 } from "./types";
+
+const TOKEN_KEY = "@instore/token";
 
 export const googleLogin = () => {
   return async (dispatch: any) => {
@@ -30,7 +36,16 @@ export const googleLogin = () => {
         return;
       }
 
-      console.log("google credential ", result);
+      //console.log("google credential ", result);
+      const res = await customersApi
+        .post({
+          token: result.accessToken,
+          provider: "GOOGLE"
+        })
+        .json();
+      // console.log("google ", res);
+
+      saveToken(res.token);
 
       NavigationService.navigate("App");
     } catch (error) {
@@ -59,7 +74,16 @@ export const facebookLogin = () => {
         return;
       }
 
-      console.log("facebook credential ", token);
+      // console.log("facebook credential ", token);
+      const res = await customersApi
+        .post({
+          token,
+          provider: "FACEBOOK"
+        })
+        .json();
+      // console.log("facebook ", res);
+
+      saveToken(res.token);
 
       NavigationService.navigate("App");
     } catch (error) {
@@ -69,4 +93,42 @@ export const facebookLogin = () => {
       console.log(error);
     }
   };
+};
+
+export const getAuthToken = () => {
+  return async (dispatch: any) => {
+    try {
+      const token = await AsyncStorage.getItem(TOKEN_KEY);
+
+      if (token) {
+        const user = await customersApi
+          .url("/me")
+          .headers({
+            authorization: `Bearer ${token}`
+          })
+          .get()
+          .json();
+
+        dispatch({
+          type: GET_USER,
+          token,
+          user
+        });
+
+        setTimeout(() => {
+          NavigationService.navigate("App");
+        }, 3000);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+const saveToken = async (token: string) => {
+  try {
+    await AsyncStorage.setItem(TOKEN_KEY, token);
+  } catch (error) {
+    console.log(error);
+  }
 };
