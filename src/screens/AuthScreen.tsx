@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { View, Image, ActivityIndicator, StyleSheet } from "react-native";
+import { View, ActivityIndicator, Animated, StyleSheet } from "react-native";
 import { SocialIcon } from "react-native-elements";
 
-import { COLORS, IMAGES } from "../config/constants";
+import { COLORS } from "../config/constants";
 import { googleLogin, facebookLogin } from "../actions";
+import OnboardingLogo from "../components/OnboardingLogo";
 interface IProps {
   navigation: any;
   googleLogin: any;
@@ -13,32 +14,67 @@ interface IProps {
 }
 
 class AuthScreen extends Component<IProps> {
+  state = {
+    opacity: new Animated.Value(0),
+    position: new Animated.Value(0)
+  };
+
+  opacityAnim = () => {
+    Animated.timing(this.state.opacity, {
+      toValue: 1,
+      duration: 500
+    }).start();
+  };
+
+  positionAnim = () => {
+    Animated.timing(this.state.position, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true
+    }).start();
+  };
+
+  componentDidMount() {
+    (Animated as any)
+      .parallel([this.positionAnim(), this.opacityAnim()])
+      .start();
+  }
+
   render() {
-    const {
-      root,
-      top,
-      bottom,
-      btnContainer,
-      imgContainer,
-      imgCover,
-      indicator
-    } = styles;
+    const { root, top, bottom, btnContainer, imgContainer, indicator } = styles;
     const { googleLogin, facebookLogin, auth } = this.props;
+    const { opacity, position } = this.state;
+
+    const logoTranslate = position.interpolate({
+      inputRange: [0, 1],
+      outputRange: [150, 0]
+    });
 
     return (
       <View style={root}>
-        <View style={top}>
+        <Animated.View
+          style={[
+            top,
+            {
+              transform: [
+                {
+                  translateY: logoTranslate
+                }
+              ]
+            }
+          ]}
+        >
           <View style={imgContainer}>
-            <Image style={imgCover} source={IMAGES.logo} />
+            <OnboardingLogo />
           </View>
-        </View>
+        </Animated.View>
         <View style={bottom}>
           <View style={indicator}>
             {auth.isLoading && (
               <ActivityIndicator size="large" color={COLORS.WHITE} />
             )}
           </View>
-          <View style={btnContainer}>
+          <Animated.View style={[btnContainer, { opacity }]}>
             <SocialIcon
               title="Sign In With Facebook"
               button
@@ -51,7 +87,7 @@ class AuthScreen extends Component<IProps> {
               type="google-plus-official"
               onPress={googleLogin}
             />
-          </View>
+          </Animated.View>
         </View>
       </View>
     );
@@ -66,24 +102,20 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   top: {
-    flex: 3,
+    flex: 1,
     alignSelf: "stretch",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.PRIMARY
   },
   bottom: {
-    flex: 2,
+    flex: 0.9,
     justifyContent: "center",
     backgroundColor: COLORS.PRIMARY,
     width: "80%"
   },
   btnContainer: {
     backgroundColor: COLORS.PRIMARY
-  },
-  imgCover: {
-    width: 250,
-    height: 250
   },
   imgContainer: {
     alignItems: "center",

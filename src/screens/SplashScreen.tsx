@@ -22,7 +22,7 @@ const TOKEN_KEY = "@instore/token";
 
 class SplashScreen extends Component<IProps> {
   async componentDidMount() {
-    // AsyncStorage.removeItem(TOKEN_KEY);
+    AsyncStorage.removeItem(TOKEN_KEY);
     await this.props.getAuthToken();
   }
   render() {
@@ -58,14 +58,14 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   top: {
-    flex: 3,
+    flex: 1,
     alignSelf: "stretch",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.PRIMARY
   },
   bottom: {
-    flex: 2,
+    flex: 0.9,
     justifyContent: "center",
     backgroundColor: COLORS.PRIMARY,
     width: "80%"
